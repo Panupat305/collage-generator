@@ -6,6 +6,7 @@ from datetime import datetime
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
+from googleapiclient.errors import HttpError
 
 
 st.set_page_config(
@@ -171,6 +172,17 @@ if uploaded_files:
                 "collage_%Y%m%d_%H%M%S.jpg"
             )
 
-            upload_to_google_drive(buffer, file_name)
+            try:
+                upload_to_google_drive(buffer, file_name)
+            
+                st.success(
+                    "บันทึก Collage เข้า Google Drive เรียบร้อยแล้ว ✅"
+                )
 
-            st.success("บันทึก Collage เข้า Google Drive เรียบร้อยแล้ว ✅")
+            except HttpError as e:
+                st.error("Google Drive Error")
+                st.code(str(e))
+
+            except Exception as e:
+                st.error("Unexpected Error")
+                st.code(str(e))
